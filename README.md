@@ -6,6 +6,7 @@ A Neovim plugin that automatically inserts templates when creating new files. It
 + 🧠 Intelligent Variable Substitution: Supports variables like {{DATE}}, {{AUTHOR}}, {{FILENAME}}, etc.
 + 📌 Cursor Positioning: Automatically positions the cursor at the location marked by <!-- CURSOR -->.
 + 🔄 Author Memorization: Automatically saves the last-entered author information.
++ 🗂️ Customizable Template Directory: Allows specifying a custom directory for template files.
 + 🚀 Flexible Configuration: Allows customizing template paths, variable markers, and default author.
 
 ## Installation
@@ -43,6 +44,8 @@ require("header").setup({
     ["*.sh"] = "bash.txt",
     ["*.c"] = "c.txt",
   },
+  -- Template directory (optional, defaults to plugin's templates/ subdirectory)
+  template_dir = vim.fn.stdpath("config") .. "/templates/", -- Custom template directory
   -- Author configuration
   default_author = "John Doe",          -- Default author
   enable_persistent_author = true,      -- Enable author memorization
