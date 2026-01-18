@@ -100,6 +100,10 @@ local function insert_template(pattern, template_path)
 		pattern = pattern,
 		callback = function()
 			local bufnr = vim.api.nvim_get_current_buf()
+			if vim.b.header_entered then
+				return
+			end
+			vim.b.header_entered = true
 
 			-- 检查是否已经插入过模板
 			if buffer_has_template(bufnr, full_path) then
