@@ -80,21 +80,22 @@ end
 
 -- 模板插入函数
 local function insert_template(pattern, template_path)
-	-- 防止重复注册
-	if registered_templates[pattern] then
-		return
-	end
-	registered_templates[pattern] = true
-
 	-- 构建完整路径，支持自定义模板目录
 	local template_dir = config.template_dir or (base_dir .. "templates/")
 	local full_path = template_dir .. template_path
+
+	-- 按 (pattern, path) 去重：同一 pattern 换目录时允许重新注册
+	local key = pattern .. "\0" .. full_path
+	if registered_templates[key] then
+		return
+	end
 
 	-- 检查模板文件是否存在
 	if vim.fn.filereadable(full_path) == 0 then
 		vim.notify(string.format("Template file not found: %s", full_path), vim.log.levels.WARN)
 		return
 	end
+	registered_templates[key] = true
 
 	vim.api.nvim_create_autocmd("BufNewFile", {
 		pattern = pattern,
@@ -269,7 +270,8 @@ function M.insert_template_for_current_file()
 	return false
 end
 
--- 默认初始化
-M.setup()
-
+-- 注意：不在此处自动调用 M.setup()
+-- 插件被 require 时 config.template_dir 尚未由用户 opts 填充，
+-- 提前注册会用 base_dir/templates/ 内的内置模板锁定路径，
+-- 且 registered_templates 守卫会让后续 setup(opts) 直接 return。
 return M
